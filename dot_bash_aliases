@@ -1,0 +1,39 @@
+alias ll='ls -lah'
+alias l.='ls -d .*'
+alias cd..='cd ..'
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .....='cd ../../../..'
+alias .4='cd ../../../..'
+alias .5='cd ../../../../..'
+
+alias vi='nvim'
+
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+alias h='history'
+alias j='jobs -l'
+alias ports='netstat -tulanp'
+alias meminfo='free -m -l -t'
+alias df='df -h'
+alias du='du -ch'
+
+alias google=''
+
+make ()
+{
+  echo "make -j $(nproc) $@"
+  nice -n10 /usr/bin/make -j $(nproc) "$@"
+}
+
+pacnew ()
+{
+  while read pnew
+  do
+    sudo meld "${pnew//.pacnew}" ${pnew}
+  done < <(sudo find /etc/ -name *.pacnew)
+}
+
