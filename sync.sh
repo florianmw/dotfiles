@@ -2,8 +2,11 @@
 
 for i in dot_* dot_*/* dot_*/*/*;
 do
-  if test -e  "${HOME}/${i/dot_/.}"
+  if test -f  "${HOME}/${i/dot_/.}"
   then
-    meld "${HOME}/${i/dot_/.}" "${i}"
+    if ! cmp -s "${HOME}/${i/dot_/.}" "${i}"
+    then
+      meld "${HOME}/${i/dot_/.}" "${i}"
+    fi
   fi
 done
