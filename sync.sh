@@ -1,12 +1,27 @@
 #!/bin/bash
 
-for i in dot_* dot_*/* dot_*/*/*;
+for i in dot_* dot_*/* dot_*/*/*
 do
-  if test -f  "${HOME}/${i/dot_/.}"
+  src="$i"
+  dst="${HOME}/${i/dot_/.}"
+
+  if test -d "$src"
   then
-    if ! cmp -s "${HOME}/${i/dot_/.}" "${i}"
+    if ! test -d "$dst"
     then
-      meld "${HOME}/${i/dot_/.}" "${i}"
+      mkdir -vp "$dst"
+    fi
+  elif test -f  "$src"
+  then
+    if test -f "$dst"
+    then
+      if ! cmp -s "$dst" "$src"
+      then
+        meld "$src" "$dst"
+      fi
+    else
+      cp -v "$src" "$dst"
     fi
   fi
 done
+
