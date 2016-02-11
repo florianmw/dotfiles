@@ -1,0 +1,46 @@
+
+# use Neovim as editor
+export EDITOR=nvim
+
+# use clang for compilation
+export CC=clang
+export CXX=clang++
+
+# ANSI color defines
+color_reset="\033[0m"       # clears all colors and styles (to white on black)
+color_bold="\033[1m"        # bold on (see below)
+color_italic="\033[3m"      # italics on
+color_uline="\033[4m"       # underline on
+color_inverse="\033[7m"     # reverses foreground & background colors
+color_strike="\033[9m"      # strikethrough on
+color_nobold="\033[22m"     # bold off (see below)
+color_noitalic="\033[23m"   # italics off
+color_nouline="\033[24m"    # underline off
+color_noinv="\033[27m"      # inverse off
+color_nostrike="\033[29m"   # srikethrough off
+color_fg_black="\033[30m"   # set foreground color to black
+color_fg_red="\033[31m"     # set foreground color to red
+color_fg_green="\033[32m"   # set foreground color to green
+color_fg_yellow="\033[33m " # set foreground color to yellow
+color_fg_blue="\033[34m"    # set foreground color to blue
+color_fg_magenta="\033[35m" # set foreground color to magenta (purple)
+color_fg_cyan="\033[36m"    # set foreground color to cyan
+color_fg_white="\033[37m"   # set foreground color to white
+color_fg_default="\033[39m" # set foreground color to default (white)
+color_bg_black="\033[40m"   # set background color to black
+color_bg_red="\033[41m"     # set background color to red
+color_bg_green="\033[42m"   # set background color to green
+color_bg_yellow="\033[43m"  # set background color to yellow
+color_bg_blue="\033[44m"    # set background color to blue
+color_bg_magenta="\033[45m" # set background color to magenta (purple)
+color_bg_cyan="\033[46m"    # set background color to cyan
+color_bg_white="\033[47m"   # set background color to white
+color_bg_default="\033[49m" # set background color to default (white)
+
+# compact format for time command
+export TIMEFORMAT='
+-----
+
+r: %R, u: %U, s: %S
+'
+
