@@ -33,7 +33,9 @@ pacnew ()
 {
   while read pnew
   do
-    sudo meld "${pnew//.pacnew}" ${pnew}
+    sudo meld "${pnew//.pacnew}" "${pnew}"
+    zenity --title ${pnew} --question --ok-label Remove --cancel-label Keep\
+      --text "What to do with \"${pnew}\"?" && sudo rm "${pnew}"
   done < <(sudo find /etc/ -name *.pacnew)
 }
 

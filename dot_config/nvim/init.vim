@@ -1,7 +1,8 @@
 
 call plug#begin('~/.config/nvim/plugged')
-Plug 'bling/vim-airline'
-Plug 'gilligan/vim-lldb'
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+"Plug 'gilligan/vim-lldb'
 Plug 'benekastah/neomake'
 Plug 'vim-utils/vim-man'
 Plug 'vim-utils/vim-cscope'
@@ -36,6 +37,8 @@ set smartindent
 "set ttymouse=xterm2     " necessary for gnu screen & mouse (removed in neovim)
 
 "set backspace=indent,eol,start "(default in neovim)
+
+set title
 
 set tags+=~/vos.tags
 
