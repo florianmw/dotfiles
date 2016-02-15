@@ -80,8 +80,9 @@ highlight DiffText   cterm=bold ctermbg=none gui=none
 
 set scrolloff=5
 
-" tabs for makefiles
-autocmd FileType make setlocal softtabstop& noexpandtab
+" tabs for makefiles and .gitconfig
+autocmd FileType make setlocal noexpandtab shiftwidth=8 softtabstop=0
+autocmd FileType gitconfig setlocal noexpandtab shiftwidth=8 softtabstop=0
 
 "highlight OverLength ctermbg=darkred ctermfg=white guibg=#FFD9D9
 "match OverLength /\%81v.\+/
