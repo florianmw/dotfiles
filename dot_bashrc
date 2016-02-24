@@ -114,8 +114,5 @@ if ! shopt -oq posix; then
   fi
 fi
 
-if test -d ~/bin
-then
-  export PATH="${PATH}:~/bin"
-fi
+test -d ~/bin && export PATH="${PATH}:$_"
 
