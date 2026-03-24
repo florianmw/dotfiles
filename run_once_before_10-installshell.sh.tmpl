@@ -1,0 +1,81 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+have() {
+  command -v "$1" >/dev/null 2>&1
+}
+
+log() {
+  printf '[dotfiles] %s\n' "$*"
+}
+
+get_pkg_manager() {
+  if have apt-get
+  then
+    echo "apt"
+  elif have dnf
+  then
+    echo "dnf"
+  elif have pacman
+  then
+    echo "pacman"
+  elif have apk
+  then
+    echo "apk"
+  else
+    log "no supported package manager found"
+    return 1
+  fi
+}
+
+install_pkg() {
+  case "$1" in
+    apt) sudo apt-get install --no-install-recommends -y "$2" ;;
+    dnf) sudo dnf install -y "$2" ;;
+    pacman) sudo pacman -Sy --noconfirm "$2" ;;
+    apk) sudo apk add "$2" ;;
+  esac
+}
+
+install_alt() {
+  mkdir -p "$HOME/.local/bin"
+  case "$1" in
+    starship) curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin" ;;
+    eza) curl -fsSL \
+        https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz \
+        | tar -xz -C "$HOME/.local/bin" && chmod +x "$HOME/.local/bin/eza" ;;
+    *) log "unknown alternative package: $1"
+       return 1 ;;
+  esac
+}
+
+install_needed() {
+  local install_list=()
+  for pkg in "$@"; do
+    if have "$pkg"; then
+      log "$pkg already installed"
+    else
+      install_list+=("$pkg")
+    fi
+  done
+
+  if [ ${#install_list[@]} -eq 0 ]; then
+    return 0
+  fi
+
+  local pkg_manager=$(get_pkg_manager)
+  if [ "$pkg_manager" = "apt" ]; then
+    sudo apt-get update
+  fi
+
+  for pkg in "${install_list[@]}"; do
+    install_pkg "$pkg_manager" "$pkg" || install_alt "$pkg"
+  done
+}
+
+if ! have sudo && [ "$(id -u)" -ne 0 ]; then
+  log "no sudo/root available; skipping"
+  exit 0
+fi
+
+install_needed zsh starship eza

@@ -1,0 +1,30 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+log() {
+  printf '[dotfiles] %s\n' "$*"
+}
+
+clone_if_missing() {
+  repo_url="$1"
+  target_dir="$2"
+
+  if [ -d "$target_dir/.git" ]; then
+    log "already present: $target_dir"
+    return 0
+  fi
+
+  mkdir -p "$(dirname "$target_dir")"
+  log "cloning $repo_url -> $target_dir"
+  git clone --depth=1 "$repo_url" "$target_dir"
+}
+
+ZSH_PLUGIN_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins"
+
+clone_if_missing \
+  "https://github.com/zsh-users/zsh-autosuggestions.git" \
+  "$ZSH_PLUGIN_DIR/zsh-autosuggestions"
+
+clone_if_missing \
+  "https://github.com/zsh-users/zsh-syntax-highlighting.git" \
+  "$ZSH_PLUGIN_DIR/zsh-syntax-highlighting"

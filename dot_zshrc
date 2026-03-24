@@ -1,0 +1,112 @@
+# ~/.zshrc
+
+# History
+HISTFILE="$HOME/.zsh_history"
+HISTSIZE=20000
+SAVEHIST=20000
+
+setopt APPEND_HISTORY
+setopt SHARE_HISTORY
+setopt HIST_IGNORE_DUPS
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_REDUCE_BLANKS
+setopt HIST_VERIFY
+setopt INC_APPEND_HISTORY
+
+# Shell behavior
+setopt AUTO_CD
+setopt AUTO_PUSHD
+setopt PUSHD_IGNORE_DUPS
+setopt INTERACTIVE_COMMENTS
+setopt NO_BEEP
+setopt EXTENDED_GLOB
+
+# Keymap
+bindkey -e
+
+# Completion
+autoload -Uz compinit
+compinit
+
+zstyle ':completion:*' menu select
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:descriptions' format '%F{yellow}%d%f'
+zstyle ':completion:*' verbose yes
+
+# Paths
+typeset -U path PATH
+path=(
+  "$HOME/.local/bin"
+  "$HOME/bin"
+  $path
+)
+export PATH
+
+# Editor
+export EDITOR=zed
+export VISUAL=zed
+export SUDO_EDITOR="$HOME/.local/bin/zed -nw"
+
+[ -f ~/.config/eza/colors.sh ] && source ~/.config/eza/colors.sh
+
+# Aliases
+alias ls='eza'
+alias l='eza -1'
+alias ll='eza -lh --git --icons --color=auto'
+alias la='eza -lah --git --icons --color=auto'
+alias tree='eza --tree --icons'
+alias tree2='eza --tree --icons --level=2'
+alias tree3='eza --tree --icons --level=3'
+alias grep='grep --color=auto'
+
+ZSH_PLUGIN_FALLBACK_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/plugins"
+
+source_first() {
+  local path
+
+  for path in "$@"; do
+    if [ -f "$path" ]; then
+      source "$path"
+      return 0
+    fi
+  done
+
+  return 1
+}
+
+# fzf
+source_first \
+  /usr/share/fzf/key-bindings.zsh \
+  /usr/share/doc/fzf/examples/key-bindings.zsh \
+  "$ZSH_PLUGIN_FALLBACK_DIR/fzf/shell/key-bindings.zsh"
+
+source_first \
+  /usr/share/fzf/completion.zsh \
+  /usr/share/doc/fzf/examples/completion.zsh \
+  "$ZSH_PLUGIN_FALLBACK_DIR/fzf/shell/completion.zsh"
+
+# Plugins
+
+# if source_first \
+#   /usr/share/zsh/plugins/zsh-history-substring-search/zsh-history-substring-search.zsh \
+#   /usr/share/zsh-history-substring-search/zsh-history-substring-search.zsh \
+#   "$ZSH_PLUGIN_FALLBACK_DIR/zsh-history-substring-search/zsh-history-substring-search.zsh"
+# then
+#   bindkey '^[[A' history-substring-search-up
+#   bindkey '^[[B' history-substring-search-down
+# fi
+
+source_first \
+  /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  /usr/share/zsh-autosuggestions/zsh-autosuggestions.zsh \
+  "$ZSH_PLUGIN_FALLBACK_DIR/zsh-autosuggestions/zsh-autosuggestions.zsh"
+
+source_first \
+  /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+  /usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+  "$ZSH_PLUGIN_FALLBACK_DIR/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+
+# Prompt
+eval "$(starship init zsh)"

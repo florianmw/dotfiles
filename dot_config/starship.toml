@@ -1,0 +1,31 @@
+palette = "onedark"
+
+[palettes.onedark]
+bg = "#282c34"
+fg = "#abb2bf"
+
+black = "#282c34"
+red = "#e06c75"
+green = "#98c379"
+yellow = "#e5c07b"
+blue = "#61afef"
+purple = "#c678dd"
+cyan = "#56b6c2"
+white = "#abb2bf"
+gray = "#5c6370"
+
+[directory]
+style = "bold blue"
+
+[git_branch]
+style = "purple"
+
+[git_status]
+style = "red"
+
+[nodejs]
+style = "green"
+
+[character]
+success_symbol = "[❯](green)"
+error_symbol = "[❯](red)"
