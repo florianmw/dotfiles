@@ -79,13 +79,12 @@ source_first() {
 # fzf
 source_first \
   /usr/share/fzf/key-bindings.zsh \
-  /usr/share/doc/fzf/examples/key-bindings.zsh \
-  "$ZSH_PLUGIN_FALLBACK_DIR/fzf/shell/key-bindings.zsh"
+  /usr/share/doc/fzf/examples/key-bindings.zsh
 
 source_first \
   /usr/share/fzf/completion.zsh \
   /usr/share/doc/fzf/examples/completion.zsh \
-  "$ZSH_PLUGIN_FALLBACK_DIR/fzf/shell/completion.zsh"
+  || command -v fzf >/dev/null && source <(fzf --zsh)
 
 # Plugins
 

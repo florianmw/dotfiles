@@ -38,13 +38,17 @@ install_pkg() {
 }
 
 install_alt() {
-  mkdir -p "$HOME/.local/bin"
+  local homeBin="$HOME/.local/bin"
+  mkdir -p "$homeBin"
   case "$1" in
-    starship) curl -sS https://starship.rs/install.sh | sh -s -- -y -b "$HOME/.local/bin" ;;
+    starship) curl -fsSL https://starship.rs/install.sh | sh -s -- -y -b "$homeBin" ;;
     eza) curl -fsSL \
         https://github.com/eza-community/eza/releases/latest/download/eza_x86_64-unknown-linux-gnu.tar.gz \
-        | tar -xz -C "$HOME/.local/bin" && chmod +x "$HOME/.local/bin/eza" ;;
-    *) log "unknown alternative package: $1"
+        | tar -xz -C "$homeBin" && chmod +x "$homeBin/eza" ;;
+    fzf) fzf_dl_url="$(curl -fsS https://api.github.com/repos/junegunn/fzf/releases/latest \
+                       | jq -r '.assets[] | select(.name | test("linux_amd64.tar.gz")) | .browser_download_url')"
+        curl -fsSL "$fzf_dl_url" | tar -xz -C "$homeBin" && chmod +x "$homeBin/fzf" ;;
+    *) log "no alternative install for: $1"
        return 1 ;;
   esac
 }
@@ -78,4 +82,4 @@ if ! have sudo && [ "$(id -u)" -ne 0 ]; then
   exit 0
 fi
 
-install_needed zsh starship eza
+install_needed zsh jq starship fzf eza gitk git-gui
