@@ -1,0 +1,80 @@
+#!/bin/bash
+
+set -euo pipefail
+
+LOCAL_HOST="localhost"
+HOST=""
+PORT=""
+CONTAINER=""
+PROJECT=""
+function usage() {
+  echo "Usage: $0 -h <host> -p <port> < -c <container> | -P <project> >"
+  exit 1
+}
+
+while getopts "h:p:c:P:" opt; do
+  case "$opt" in
+    h)
+      HOST="$OPTARG"
+      ;;
+    p)
+      PORT="$OPTARG"
+      ;;
+    c)
+      CONTAINER="$OPTARG"
+      ;;
+    P)
+      PROJECT="$OPTARG"
+      ;;
+    *)
+      usage
+      ;;
+  esac
+done
+
+# Shift parsed options away
+shift $((OPTIND - 1))
+
+# Validation
+if [[ -z "$HOST" || -z "$PORT" || ( -z "$CONTAINER" && -z "$PROJECT" ) ]]; then
+  usage
+fi
+
+if [ -n "$PROJECT" ]
+then
+  # Fetch service names and IPs
+  declare -a services ips
+  while IFS=: read -r service ip
+  do
+    services+=("$service")
+    ips+=("$ip")
+  done < <(ssh "$HOST" -- "bash -lc \"docker ps -q --filter 'label=com.docker.compose.project=${PROJECT}' | xargs docker inspect --type container --format '{{index .Config.Labels \\\"com.docker.compose.service\\\"}}:{{range .NetworkSettings.Networks}}{{.IPAddress}}{{break}}{{end}}'\"")
+
+  # Let user pick
+  PS3="Select a service: "
+  select service in "${services[@]}"; do
+    if [[ -n "$service" ]]
+    then
+      index=$((REPLY - 1))
+      IP_ADDR="${ips[$index]}"
+      echo "Selected: $service → $IP_ADDR"
+      break
+    else
+      echo "Invalid selection"
+    fi
+  done
+fi
+
+if [ -n "$CONTAINER" ]
+then
+  IP_ADDR="$(ssh "$HOST" -- "bash -lc \"docker inspect --type container -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{break}}{{end}}' ${CONTAINER}\"")"
+fi
+
+echo "Forwarding port $PORT from $LOCAL_HOST to $IP_ADDR on $HOST"
+
+ssh -NT \
+  -o ExitOnForwardFailure=yes \
+  -o ServerAliveInterval=30 \
+  -o ServerAliveCountMax=3 \
+  -L "${LOCAL_HOST}:${PORT}:${IP_ADDR}:${PORT}" \
+  "$HOST"
